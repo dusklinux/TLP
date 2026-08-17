@@ -39,7 +39,7 @@ use constant EXIT_DEFCONF => 6;
 use constant ESSENTIAL_DEFAULTS => qr/TLP_ENABLE|TLP_WARN_LEVEL|TLP_AUTO_SWITCH|TLP_PROFILE_AC|TLP_PROFILE_BAT/;
 
 # --- Global vars
-my @config_val = ();      # 2-dim array: parameter name, value, source, default-value
+my @config_val = ();      # 2-dim array: parameter name, value, source, default-value, renamed-flag
 my %config_idx = ();      # hash: parameter name => index into the name-value array
 
 my $skip_defaults = 0;    # skip all entries from CONF_DEF
@@ -48,6 +48,7 @@ my %rename = ();          # hash: OLD_PARAMETER => NEW_PARAMETER
 my $renrex;               # compiled regex for renaming parameters
 my $do_rename = 0;        # enable renaming (when $renrex not empty)
 my %dprmsg    = ();       # hash: PARAMETER => deprecated message
+my %renmsg    = ();       # hash: PARAMETER => individual renamed message
 
 my $notrace      = 0;
 my $trace2stderr = 0;
@@ -87,6 +88,7 @@ sub store_name_value_source {
     my $append = $_[2];
     my $source = $_[3];
     my $is_def = $_[4];
+    my $is_ren = $_[5];
 
     $debug = 1 if ( $name eq "TLP_DEBUG" && $value =~ /\bcfg\b/ );
 
@@ -106,35 +108,39 @@ sub store_name_value_source {
             # append value, source
             $config_val[$config_idx{$name}][1] .= " $value";
             $config_val[$config_idx{$name}][2] .= " & $source";
-            printf_debug ("tlp-readconfs.replace+ [%s]: %s=\"%s\" '%s' def='%s'\n",
+            $config_val[$config_idx{$name}][4] = $is_ren;
+            printf_debug ("tlp-readconfs.replace+ [%s]: %s=\"%s\" '%s' def='%s' ren=%s\n",
                 $config_idx{$name},
                 $name,
                 $config_val[$config_idx{$name}][1],
                 $config_val[$config_idx{$name}][2],
-                $config_val[$config_idx{$name}][3]
+                $config_val[$config_idx{$name}][3],
+                $config_val[$config_idx{$name}][4]
             );
         } else {
             # replace value, source
             $config_val[$config_idx{$name}][1] = $value;
             $config_val[$config_idx{$name}][2] = $source;
-            printf_debug ("tlp-readconfs.replace  [%s]: %s=\"%s\" '%s' def='%s'\n",
+            $config_val[$config_idx{$name}][4] = $is_ren;
+            printf_debug ("tlp-readconfs.replace  [%s]: %s=\"%s\" '%s' def='%s' ren=%s\n",
                 $config_idx{$name},
                 $name,
                 $value,
                 $source,
-                $config_val[$config_idx{$name}][3]
+                $config_val[$config_idx{$name}][3],
+                $config_val[$config_idx{$name}][4]
             );
         }
     } else {
         # new name --> store name, value, source and hash name
         if ( $is_def ) {
             # save value as default
-            push(@config_val, [$name, $value, $source, $value]);
-            printf_debug ("tlp-readconfs.ins-def  [%s]: %s=\"%s\" '%s' def='%s'\n", $#config_val, $name, $value, $source, $value);
+            push(@config_val, [$name, $value, $source, $value, 0]);
+            printf_debug ("tlp-readconfs.ins-def  [%s]: %s=\"%s\" '%s' def='%s ren=0'\n", $#config_val, $name, $value, $source, $value);
         } else {
             # save value as user config
-            push(@config_val, [$name, $value, $source, ""]);
-            printf_debug ("tlp-readconfs.insert   [%s]: %s=\"%s\" %s def='%s'\n", $#config_val, $name, $value, $source, "");
+            push(@config_val, [$name, $value, $source, "", $is_ren]);
+            printf_debug ("tlp-readconfs.insert   [%s]: %s=\"%s\" %s def='%s' ren=%s\n", $#config_val, $name, $value, $source, "", $is_ren);
         }
         $config_idx{$name} = $#config_val;
 
@@ -174,13 +180,18 @@ sub parse_configfile {
         # select lines with format PARAMETER=value or PARAMETER="value"
         if ( $line =~ /^(?<name>[A-Z_]+[0-9]*)(?<op>=|\+=)"?(?<value>[][0-9a-zA-Z _.:-]*)"?\s*$/ ) {
             my $name = $+{name};
+            my $is_ren = 0;
             if ( $do_ren ) {
                 # rename PARAMETER
+                my $orig_name = $name;
                 $name =~ s/$renrex/$rename{$1}/;
+                if ( $name ne $orig_name ) {
+                    $is_ren = 1;
+                }
             }
             my $value = $+{value};
             my $append = $+{op} eq "+=";
-            store_name_value_source ($name, $value, $append, $source . " L" . sprintf ("%04d", $ln), $is_def );
+            store_name_value_source ($name, $value, $append, $source . " L" . sprintf ("%04d", $ln), $is_def, $is_ren);
         }
     }
     close ($cf);
@@ -203,7 +214,7 @@ sub write_runconf {
     }
 
     foreach ( @config_val ) {
-        my ($name, $value, $source, $default) = @$_;
+        my ($name, $value, $source, $is_def, $is_ren) = @$_;
 
         # skip default entries
         next if ( $skip_defaults # if TLP_DISABLE_DEFAULTS=1
@@ -214,13 +225,15 @@ sub write_runconf {
         if ( $runconf eq *STDOUT ) {
             my $msg = "";
 
-            # stdout: check for deprecated message
+            # stdout: add deprecated or renamed message
             if ( defined $dprmsg{$name} ) {
                 $msg = " #! $dprmsg{$name}";
+            } elsif ( $is_ren and defined $renmsg{$name} ) {
+                $msg = " #> $renmsg{$name}";
             }
 
             # --cdiff: do not show user config lines matching the default
-            if ( ! $cdiff || $value ne $default ) {
+            if ( ! $cdiff || $value ne $is_def ) {
                 printf {$runconf} "%s: %s=\"%s\"%s\n", $source, $name, $value, $msg;
             }
         } else {
@@ -243,11 +256,18 @@ sub parse_renfile {
     # accumulate renaming
     while ( my $line = <$rf> ) {
         chomp $line;
-        # select lines with format 'OLD_PARAMETER<whitespace>NEW_PARAMETER'
-        if ( $line =~ /^(?<old_name>[A-Z_]+[0-9]*)\s+(?<new_name>[A-Z_]+[0-9]*)\s*$/ ) {
+        # select lines with format 'OLD_PARAMETER<whitespace>NEW_PARAMETER[<whitespace># comment]'
+        if ( $line =~ /^(?<old_name>[A-Z_]+[0-9]*)\s+(?<new_name>[A-Z_]+[0-9]*)(?:\s*#\s*(?<rename_msg>.*?))?\s*$/ ) {
             my $old_name = $+{old_name};
             my $new_name = $+{new_name};
             $rename{$old_name} = $new_name;
+            if ( $+{rename_msg} ) {
+                # individual message
+                $renmsg{$new_name} = $+{rename_msg};
+            } else {
+                # standard message
+                $renmsg{$new_name} = "runtime-renamed from $old_name: change your config!";
+            }
         }
     }
     close ($rf);
