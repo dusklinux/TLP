@@ -389,16 +389,16 @@ set_radio_device_states () {
     case "$1" in
         "$PP_PRF") # performance profile --> build enable list
             quiet=1 # do not display progress
-            devs2enable="${DEVICES_TO_ENABLE_ON_AC:-$enable_on_start}"
-            devs2disable="${DEVICES_TO_DISABLE_ON_AC:-$disable_on_start}"
-            devs2disableu=${DEVICES_TO_DISABLE_ON_AC_NOT_IN_USE:-}
+            devs2enable="${DEVICES_TO_ENABLE_ON_PRF:-$enable_on_start}"
+            devs2disable="${DEVICES_TO_DISABLE_ON_PRF:-$disable_on_start}"
+            devs2disableu=${DEVICES_TO_DISABLE_ON_PRF_NOT_IN_USE:-}
             ;;
 
         "$PP_BAL") # balanced profile --> build disable/enable lists
             quiet=1 # do not display progress
-            devs2enable="${DEVICES_TO_ENABLE_ON_BAT:-$enable_on_start}"
-            devs2disable="${DEVICES_TO_DISABLE_ON_BAT:-$disable_on_start}"
-            devs2disableu=${DEVICES_TO_DISABLE_ON_BAT_NOT_IN_USE:-}
+            devs2enable="${DEVICES_TO_ENABLE_ON_BAL:-$enable_on_start}"
+            devs2disable="${DEVICES_TO_DISABLE_ON_BAL:-$disable_on_start}"
+            devs2disableu=${DEVICES_TO_DISABLE_ON_BAL_NOT_IN_USE:-}
             ;;
 
         "$PP_SAV") # power-saver profile --> build disable/enable lists

@@ -240,12 +240,12 @@ set_disk_apm_level () { # set disk apm level
     case "$1" in
         "$PP_PRF")
             # shellcheck disable=SC2086
-            set -- $DISK_APM_LEVEL_ON_AC
+            set -- $DISK_APM_LEVEL_ON_PRF
             ;;
 
         "$PP_BAL"|"$PP_SAV")
             # shellcheck disable=SC2086
-            set -- $DISK_APM_LEVEL_ON_BAT
+            set -- $DISK_APM_LEVEL_ON_BAL
             ;;
 
         *)
@@ -316,12 +316,12 @@ set_disk_spindown_timeout () { # set disk spindown timeout
     case "$pwrmode" in
         "$PP_PRF")
             # shellcheck disable=SC2086
-            set -- $DISK_SPINDOWN_TIMEOUT_ON_AC
+            set -- $DISK_SPINDOWN_TIMEOUT_ON_PRF
             ;;
 
         "$PP_BAL"|"$PP_SAV")
             # shellcheck disable=SC2086
-            set -- $DISK_SPINDOWN_TIMEOUT_ON_BAT
+            set -- $DISK_SPINDOWN_TIMEOUT_ON_BAL
             ;;
 
         *)
@@ -449,8 +449,8 @@ set_sata_link_power () { # set ahci link power management
     local ctrl_avail="0"
 
     case "$pwrmode" in
-        "$PP_PRF")           pwrlist="${SATA_LINKPWR_ON_AC:-}" ;;
-        "$PP_BAL"|"$PP_SAV") pwrlist="${SATA_LINKPWR_ON_BAT:-}" ;;
+        "$PP_PRF")           pwrlist="${SATA_LINKPWR_ON_PRF:-}" ;;
+        "$PP_BAL"|"$PP_SAV") pwrlist="${SATA_LINKPWR_ON_BAL:-}" ;;
     esac
 
     if [ -z "$pwrlist" ]; then
@@ -505,10 +505,10 @@ set_ahci_disk_runtime_pm () { # set runtime power management for ahci disks
     local control dev timeout rc
 
     case "$1" in
-        "$PP_PRF")           control="${AHCI_RUNTIME_PM_ON_AC:-}" ;;
-        "$PP_BAL"|"$PP_SAV") control="${AHCI_RUNTIME_PM_ON_BAT:-}" ;;
+        "$PP_PRF")           control="${AHCI_RUNTIME_PM_ON_PRF:-}" ;;
+        "$PP_BAL"|"$PP_SAV") control="${AHCI_RUNTIME_PM_ON_BAL:-}" ;;
         "$PP_SUS") # reset on suspend only when configured
-            if [ -n "${AHCI_RUNTIME_PM_ON_AC:-}${AHCI_RUNTIME_PM_ON_BAT:-}" ]; then
+            if [ -n "${AHCI_RUNTIME_PM_ON_PRF:-}${AHCI_RUNTIME_PM_ON_BAL:-}" ]; then
                 control="on"
             fi
             ;;
@@ -588,10 +588,10 @@ set_ahci_port_runtime_pm () { # set runtime power management for ahci ports
     local control device
 
     case "$1" in
-        "$PP_PRF")           control="${AHCI_RUNTIME_PM_ON_AC:-}" ;;
-        "$PP_BAL"|"$PP_SAV") control="${AHCI_RUNTIME_PM_ON_BAT:-}" ;;
+        "$PP_PRF")           control="${AHCI_RUNTIME_PM_ON_PRF:-}" ;;
+        "$PP_BAL"|"$PP_SAV") control="${AHCI_RUNTIME_PM_ON_BAL:-}" ;;
         "$PP_SUS") # reset on suspend only when configured
-            if [ -n "${AHCI_RUNTIME_PM_ON_AC:-}${AHCI_RUNTIME_PM_ON_BAT:-}" ]; then
+            if [ -n "${AHCI_RUNTIME_PM_ON_PRF:-}${AHCI_RUNTIME_PM_ON_BAL:-}" ]; then
                 control="on"
             fi
             ;;
@@ -630,8 +630,8 @@ set_laptopmode () {
     local isec rc
 
     case "$1" in
-        "$PP_PRF")           isec="${DISK_IDLE_SECS_ON_AC:-}" ;;
-        "$PP_BAL"|"$PP_SAV") isec="${DISK_IDLE_SECS_ON_BAT:-}" ;;
+        "$PP_PRF")           isec="${DISK_IDLE_SECS_ON_PRF:-}" ;;
+        "$PP_BAL"|"$PP_SAV") isec="${DISK_IDLE_SECS_ON_BAL:-}" ;;
     esac
 
     # replace with empty string if non-numeric chars are contained
@@ -666,8 +666,8 @@ set_dirty_parms () {
     local age cage df ec
 
     case "$1" in
-        "$PP_PRF")           age="${MAX_LOST_WORK_SECS_ON_AC:-0}" ;;
-        "$PP_BAL"|"$PP_SAV") age="${MAX_LOST_WORK_SECS_ON_BAT:-0}" ;;
+        "$PP_PRF")           age="${MAX_LOST_WORK_SECS_ON_PRF:-0}" ;;
+        "$PP_BAL"|"$PP_SAV") age="${MAX_LOST_WORK_SECS_ON_BAL:-0}" ;;
     esac
 
     # calc age in centisecs, non numeric values result in "0"

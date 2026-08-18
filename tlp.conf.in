@@ -13,13 +13,13 @@
 #
 # TLP profiles: a part of TLP's parameters is divided into two or three
 # groups:
-# - performance: parameters ending in _AC are used when AC power is
+# - performance: parameters ending in _PRF are used when AC power is
 #   connected or when the command 'tlp performance' is run.
-# - balanced: parameters ending in _BAT are used when operating
+# - balanced: parameters ending in _BAL are used when operating
 #   on battery power or when the command 'tlp balanced' is run.
 # - power-saver: parameters ending in _SAV are used when the command
 #   'tlp power-saver' is run. If there is no _SAV parameter available
-#   for a feature, the _BAT parameter will be used instead.
+#   for a feature, the _BAL parameter will be used instead.
 # - Any remaining parameters not divided apply to all TLP profiles.
 #
 # Please note:
@@ -33,7 +33,7 @@
 #   Remove the leading '#' if you want to enable a feature without a default
 #   or if you want to set a value other than the default.
 # - Parameters must always be specified for all TLP profiles, i.e. in the
-#   AC, BAT and SAV category (where applicable). If you omit one of them,
+#   PRF, BAL and SAV category (where applicable). If you omit one of them,
 #   the missing profile will receive its value from another profile, since
 #   a change will only occur if different values are defined.
 # - To completely disable a feature, use PARAMETER="".
@@ -117,7 +117,7 @@
 # Power supply classes to ignore when determining TLP profile:
 #  AC, USB, BAT.
 # Separate multiple classes with spaces.
-# Note: try on laptops where operation mode AC/BAT is incorrectly detected.
+# Note: try on laptops where power source AC/battery is incorrectly detected.
 # Default: <none>
 
 #TLP_PS_IGNORE="BAT"
@@ -125,16 +125,16 @@
 # Seconds laptop_mode has to wait after the disk goes idle before doing a
 # sync. Non-zero value enables, zero disables laptop_mode.
 # Note: will be ignored starting with kernel 7.0
-# Default: 0 (AC), 2 (BAT)
+# Default: 0 (PRF), 2 (BAL)
 
-#DISK_IDLE_SECS_ON_AC=0
-#DISK_IDLE_SECS_ON_BAT=2
+#DISK_IDLE_SECS_ON_PRF=0
+#DISK_IDLE_SECS_ON_BAL=2
 
 # Dirty page values (timeouts in secs).
-# Default: 15 (AC), 60 (BAT)
+# Default: 15 (PRF), 60 (BAL)
 
-#MAX_LOST_WORK_SECS_ON_AC=15
-#MAX_LOST_WORK_SECS_ON_BAT=60
+#MAX_LOST_WORK_SECS_ON_PRF=15
+#MAX_LOST_WORK_SECS_ON_BAL=60
 
 # Select a CPU scaling driver operation mode.
 # Intel CPU with intel_pstate driver:
@@ -142,8 +142,8 @@
 # AMD Zen 2 or newer CPU with amd-pstate driver as of kernel 6.3/6.4(*):
 #   active, passive, guided(*).
 # Default: <none>
-#CPU_DRIVER_OPMODE_ON_AC=active
-#CPU_DRIVER_OPMODE_ON_BAT=active
+#CPU_DRIVER_OPMODE_ON_PRF=active
+#CPU_DRIVER_OPMODE_ON_BAL=active
 #CPU_DRIVER_OPMODE_ON_SAV=active
 
 # Select a CPU frequency scaling governor.
@@ -162,23 +162,23 @@
 #   changing the governor.
 # Default: <none>
 
-#CPU_SCALING_GOVERNOR_ON_AC=performance
-#CPU_SCALING_GOVERNOR_ON_BAT=powersave
+#CPU_SCALING_GOVERNOR_ON_PRF=performance
+#CPU_SCALING_GOVERNOR_ON_BAL=powersave
 #CPU_SCALING_GOVERNOR_ON_SAV=powersave
 
 # Set the min/max frequency available for the scaling governor.
 # Possible values depend on your CPU. For available frequencies see
 # the output of tlp-stat -p.
 # Notes:
-# - Min/max frequencies must always be specified for both AC *and* BAT
+# - Min/max frequencies must always be specified for all profiles
 # - Not recommended for use with the intel_pstate driver, use
-#   CPU_MIN/MAX_PERF_ON_AC/BAT below instead
+#   CPU_MIN/MAX_PERF_ON_PRF/BAL/SAV below instead
 # Default: <none>
 
-#CPU_SCALING_MIN_FREQ_ON_AC=0
-#CPU_SCALING_MAX_FREQ_ON_AC=0
-#CPU_SCALING_MIN_FREQ_ON_BAT=0
-#CPU_SCALING_MAX_FREQ_ON_BAT=0
+#CPU_SCALING_MIN_FREQ_ON_PRF=0
+#CPU_SCALING_MAX_FREQ_ON_PRF=0
+#CPU_SCALING_MIN_FREQ_ON_BAL=0
+#CPU_SCALING_MAX_FREQ_ON_BAL=0
 #CPU_SCALING_MIN_FREQ_ON_SAV=0
 #CPU_SCALING_MAX_FREQ_ON_SAV=0
 
@@ -193,10 +193,10 @@
 #   will not honor EPB. Only the matching feature will be applied by TLP.
 # * AMD Zen 2 or newer CPU
 #   EPP: amd-pstate driver in active mode ('amd-pstate-epp') as of kernel 6.3
-# Default: balance_performance (AC), balance_power (BAT), power (SAV)
+# Default: balance_performance (PRF), balance_power (BAL), power (SAV)
 
-#CPU_ENERGY_PERF_POLICY_ON_AC=balance_performance
-#CPU_ENERGY_PERF_POLICY_ON_BAT=balance_power
+#CPU_ENERGY_PERF_POLICY_ON_PRF=balance_performance
+#CPU_ENERGY_PERF_POLICY_ON_BAL=balance_power
 #CPU_ENERGY_PERF_POLICY_ON_SAV=power
 
 # Set Intel CPU P-state performance: 0..100 (%).
@@ -205,10 +205,10 @@
 # Requires Intel Core i 2nd gen. or newer CPU with intel_pstate driver.
 # Default: <none>
 
-#CPU_MIN_PERF_ON_AC=0
-#CPU_MAX_PERF_ON_AC=100
-#CPU_MIN_PERF_ON_BAT=0
-#CPU_MAX_PERF_ON_BAT=80
+#CPU_MIN_PERF_ON_PRF=0
+#CPU_MAX_PERF_ON_PRF=100
+#CPU_MIN_PERF_ON_BAL=0
+#CPU_MAX_PERF_ON_BAL=80
 #CPU_MIN_PERF_ON_SAV=0
 #CPU_MAX_PERF_ON_SAV=60
 
@@ -219,8 +219,8 @@
 # Note: a value of 1 does *not* activate boosting, it just allows it.
 # Default: <none>
 
-#CPU_BOOST_ON_AC=1
-#CPU_BOOST_ON_BAT=1
+#CPU_BOOST_ON_PRF=1
+#CPU_BOOST_ON_BAL=1
 #CPU_BOOST_ON_SAV=0
 
 # Set CPU dynamic boost feature:
@@ -232,8 +232,8 @@
 # Note: AMD CPUs currently have no tunable for this.
 # Default: <none>
 
-#CPU_HWP_DYN_BOOST_ON_AC=1
-#CPU_HWP_DYN_BOOST_ON_BAT=1
+#CPU_HWP_DYN_BOOST_ON_PRF=1
+#CPU_HWP_DYN_BOOST_ON_BAL=1
 #CPU_HWP_DYN_BOOST_ON_SAV=0
 
 # Kernel NMI Watchdog:
@@ -252,12 +252,12 @@
 # ones listed above. Check the output of tlp-stat -p to see what's available.
 # The defaults already cover common profiles.
 # Default:
-#   "balanced-performance performance" (AC),
-#   "balanced" (BAT),
+#   "balanced-performance performance" (PRF),
+#   "balanced" (BAL),
 #   "low-power cool quiet" (SAV)
 
-#PLATFORM_PROFILE_ON_AC="performance"
-#PLATFORM_PROFILE_ON_BAT="balanced"
+#PLATFORM_PROFILE_ON_PRF="performance"
+#PLATFORM_PROFILE_ON_BAL="balanced"
 #PLATFORM_PROFILE_ON_SAV="low-power"
 
 # System suspend mode:
@@ -270,8 +270,8 @@
 # by not enabling this.
 # Default: <none>
 
-#MEM_SLEEP_ON_AC=s2idle
-#MEM_SLEEP_ON_BAT=deep
+#MEM_SLEEP_ON_PRF=s2idle
+#MEM_SLEEP_ON_BAL=deep
 
 # Define disk devices on which the following DISK/AHCI_RUNTIME parameters act.
 # Separate multiple devices with spaces.
@@ -284,10 +284,10 @@
 # Levels 1..127 may spin down the disk; 255 allowable on most drives.
 # Separate values for multiple disks with spaces. Use the special value 'keep'
 # to keep the hardware default for the particular disk.
-# Default: 254 (AC), 128 (BAT)
+# Default: 254 (PRF), 128 (BAL)
 
-#DISK_APM_LEVEL_ON_AC="254 254"
-#DISK_APM_LEVEL_ON_BAT="128 128"
+#DISK_APM_LEVEL_ON_PRF="254 254"
+#DISK_APM_LEVEL_ON_BAL="128 128"
 
 # Exclude disk classes from advanced power management (APM):
 #   sata, ata, usb, ieee1394.
@@ -308,8 +308,8 @@
 # to keep the hardware default for the particular disk.
 # Default: <none>
 
-#DISK_SPINDOWN_TIMEOUT_ON_AC="0 0"
-#DISK_SPINDOWN_TIMEOUT_ON_BAT="0 0"
+#DISK_SPINDOWN_TIMEOUT_ON_PRF="0 0"
+#DISK_SPINDOWN_TIMEOUT_ON_BAL="0 0"
 
 # Select I/O scheduler for the disk devices.
 # Multi queue (blk-mq) schedulers:
@@ -332,10 +332,10 @@
 #   min_power, med_power_with_dipm(*), medium_power, max_performance.
 # (*) recommended.
 # Multiple values separated with spaces are tried sequentially until success.
-# Default: med_power_with_dipm (AC & BAT)
+# Default: med_power_with_dipm (PRF, BAL)
 
-#SATA_LINKPWR_ON_AC="med_power_with_dipm"
-#SATA_LINKPWR_ON_BAT="med_power_with_dipm"
+#SATA_LINKPWR_ON_PRF="med_power_with_dipm"
+#SATA_LINKPWR_ON_BAL="med_power_with_dipm"
 
 # Exclude SATA links from AHCI link power management (ALPM).
 # SATA links are specified by their host. Refer to the output of
@@ -351,13 +351,13 @@
 # Note: SATA controllers are PCIe bus devices and handled by RUNTIME_PM
 # further down.
 
-# Default: on (AC), auto (BAT)
+# Default: on (PRF), auto (BAL)
 
-#AHCI_RUNTIME_PM_ON_AC=on
-#AHCI_RUNTIME_PM_ON_BAT=auto
+#AHCI_RUNTIME_PM_ON_PRF=on
+#AHCI_RUNTIME_PM_ON_BAL=auto
 
 # Seconds of inactivity before disk is suspended.
-# Note: effective only when AHCI_RUNTIME_PM_ON_AC/BAT is activated.
+# Note: effective only when AHCI_RUNTIME_PM_ON_PRF/BAL is activated.
 # Default: 15
 
 #AHCI_RUNTIME_PM_TIMEOUT=15
@@ -368,8 +368,8 @@
 # Note: an UltraBay/MediaBay hard disk is never powered off.
 # Default: 0
 
-#BAY_POWEROFF_ON_AC=0
-#BAY_POWEROFF_ON_BAT=0
+#BAY_POWEROFF_ON_PRF=0
+#BAY_POWEROFF_ON_BAL=0
 
 # Optical drive device to power off
 # Default: sr0
@@ -379,35 +379,36 @@
 # Intel GPU power management.
 # Select power profile for the Intel Xe GPU: base, power_saving.
 # Note: requires xe driver.
-# Default: base (AC), power_saving (BAT), power_saving (SAV)
+# Default: base (PRF), power_saving (BAL), power_saving (SAV)
 
-#INTEL_GPU_POWER_PROFILE_ON_AC=base
-#INTEL_GPU_POWER_PROFILE_ON_BAT=base
+#INTEL_GPU_POWER_PROFILE_ON_PRF=base
+#INTEL_GPU_POWER_PROFILE_ON_BAL=base
 #INTEL_GPU_POWER_PROFILE_ON_SAV=power_saving
 
 # Set the min/max/turbo frequency for the Intel GPU.
 # Parameters actually used depend on the driver:
-# - i915 driver supports min, max and turbo(boost) frequency.
-# - xe driver supports min and max frequency only.
+# - i915 driver supports min, max and turbo(boost) frequency
+# - xe driver supports min and max frequency only
+# - Frequencies must always be specified for all profiles
 # Default: <none>
 
-#INTEL_GPU_MIN_FREQ_ON_AC=0
-#INTEL_GPU_MIN_FREQ_ON_BAT=0
+#INTEL_GPU_MIN_FREQ_ON_PRF=0
+#INTEL_GPU_MIN_FREQ_ON_BAL=0
 #INTEL_GPU_MIN_FREQ_ON_SAV=0
-#INTEL_GPU_MAX_FREQ_ON_AC=0
-#INTEL_GPU_MAX_FREQ_ON_BAT=0
+#INTEL_GPU_MAX_FREQ_ON_PRF=0
+#INTEL_GPU_MAX_FREQ_ON_BAL=0
 #INTEL_GPU_MAX_FREQ_ON_SAV=0
-#INTEL_GPU_BOOST_FREQ_ON_AC=0
-#INTEL_GPU_BOOST_FREQ_ON_BAT=0
+#INTEL_GPU_BOOST_FREQ_ON_PRF=0
+#INTEL_GPU_BOOST_FREQ_ON_BAL=0
 #INTEL_GPU_BOOST_FREQ_ON_SAV=0
 
 # AMD GPU power management.
 # Performance level (DPM): high, auto, low; auto is recommended.
 # Note: requires amdgpu or radeon driver.
-# Default: auto (AC), auto (BAT), low (SAV)
+# Default: auto (PRF), auto (BAL), low (SAV)
 
-#RADEON_DPM_PERF_LEVEL_ON_AC=auto
-#RADEON_DPM_PERF_LEVEL_ON_BAT=auto
+#RADEON_DPM_PERF_LEVEL_ON_PRF=auto
+#RADEON_DPM_PERF_LEVEL_ON_BAL=auto
 #RADEON_DPM_PERF_LEVEL_ON_SAV=low
 
 # Display panel adaptive backlight modulation (ABM) level: 0(off), 1..4.
@@ -416,17 +417,17 @@
 # Notes:
 # - Requires AMD Vega or newer GPU with amdgpu driver as of kernel 6.9
 # - Savings are made at the expense of color balance
-# Default: 0 (AC), 1 (BAT), 3 (SAV)
+# Default: 0 (PRF), 1 (BAL), 3 (SAV)
 
-#AMDGPU_ABM_LEVEL_ON_AC=0
-#AMDGPU_ABM_LEVEL_ON_BAT=1
+#AMDGPU_ABM_LEVEL_ON_PRF=0
+#AMDGPU_ABM_LEVEL_ON_BAL=1
 #AMDGPU_ABM_LEVEL_ON_SAV=3
 
 # Wi-Fi power saving mode: on=enable, off=disable.
-# Default: off (AC), on (BAT)
+# Default: off (PRF), on (BAL)
 
-#WIFI_PWR_ON_AC=off
-#WIFI_PWR_ON_BAT=on
+#WIFI_PWR_ON_PRF=off
+#WIFI_PWR_ON_BAL=on
 
 # Disable Wake-on-LAN: Y/N.
 # Default: Y
@@ -439,11 +440,11 @@
 # systems without PulseAudio may require 10.
 # Default: 1
 
-#SOUND_POWER_SAVE_ON_AC=1
-#SOUND_POWER_SAVE_ON_BAT=1
+#SOUND_POWER_SAVE_ON_PRF=1
+#SOUND_POWER_SAVE_ON_BAL=1
 
 # Disable controller too (HDA only): Y/N.
-# Note: effective only when SOUND_POWER_SAVE_ON_AC/BAT is activated.
+# Note: effective only when SOUND_POWER_SAVE_ON_PRF/BAL is activated.
 # Default: Y
 
 #SOUND_POWER_SAVE_CONTROLLER=Y
@@ -453,16 +454,16 @@
 # (*) keeps BIOS ASPM defaults (recommended)
 # Default: default
 
-#PCIE_ASPM_ON_AC=default
-#PCIE_ASPM_ON_BAT=default
+#PCIE_ASPM_ON_PRF=default
+#PCIE_ASPM_ON_BAL=default
 #PCIE_ASPM_ON_SAV=default
 
 # Autosuspend PCIe devices (Runtime Power Management):
 #   on=disable, auto=enable.
-# Default: on (AC), auto (BAT)
+# Default: on (PRF), auto (BAL)
 
-#RUNTIME_PM_ON_AC=on
-#RUNTIME_PM_ON_BAT=auto
+#RUNTIME_PM_ON_PRF=on
+#RUNTIME_PM_ON_BAL=auto
 
 # Exclude listed PCIe device adresses from autosuspend.
 # Note: this preserves the kernel driver default, to force a certain state
@@ -563,16 +564,16 @@
 # Default: <none>
 
 # - performance profile
-#DEVICES_TO_ENABLE_ON_AC="bluetooth nfc wifi wwan"
-#DEVICES_TO_DISABLE_ON_AC="bluetooth nfc wifi wwan"
+#DEVICES_TO_ENABLE_ON_PRF="bluetooth nfc wifi wwan"
+#DEVICES_TO_DISABLE_ON_PRF="bluetooth nfc wifi wwan"
 # When not in use (not connected) only
-#DEVICES_TO_DISABLE_ON_AC_NOT_IN_USE="bluetooth nfc wifi wwan"
+#DEVICES_TO_DISABLE_ON_PRF_NOT_IN_USE="bluetooth nfc wifi wwan"
 
 # - balanced profile
-#DEVICES_TO_ENABLE_ON_BAT="bluetooth nfc wifi wwan"
-#DEVICES_TO_DISABLE_ON_BAT="bluetooth nfc wifi wwan"
+#DEVICES_TO_ENABLE_ON_BAL="bluetooth nfc wifi wwan"
+#DEVICES_TO_DISABLE_ON_BAL="bluetooth nfc wifi wwan"
 # When not in use (not connected) only
-#DEVICES_TO_DISABLE_ON_BAT_NOT_IN_USE="bluetooth nfc wifi wwan"
+#DEVICES_TO_DISABLE_ON_BAL_NOT_IN_USE="bluetooth nfc wifi wwan"
 
 # - power-saver profile
 #DEVICES_TO_ENABLE_ON_SAV="bluetooth nfc wifi wwan"

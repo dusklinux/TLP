@@ -1078,8 +1078,8 @@ id2pp () { # convert power profile id to code
 pp2sfx () { # convert power profile code to config suffix
     # $1: profile: PP_PRF=0/PP_BAL=1/PP_SAV=2
     case "$1" in
-        "$PP_PRF")  printf "AC" ;;
-        "$PP_BAL")  printf "BAT" ;;
+        "$PP_PRF")  printf "PRF" ;;
+        "$PP_BAL")  printf "BAL" ;;
         "$PP_SAV")  printf "SAV" ;;
     esac
 }

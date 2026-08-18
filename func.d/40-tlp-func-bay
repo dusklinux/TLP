@@ -57,8 +57,8 @@ poweroff_drivebay () { # power off optical drive in drive bay
     local pwr optdrv syspath rc
 
     case "$1" in
-        "$PP_PRF")           pwr="$BAY_POWEROFF_ON_AC" ;;
-        "$PP_BAL"|"$PP_SAV") pwr="$BAY_POWEROFF_ON_BAT" ;;
+        "$PP_PRF")           pwr="$BAY_POWEROFF_ON_PRF" ;;
+        "$PP_BAL"|"$PP_SAV") pwr="$BAY_POWEROFF_ON_BAL" ;;
     esac
 
     # Run only if forced or enabled
@@ -144,8 +144,8 @@ poweroff_drivebay () { # power off optical drive in drive bay
 suspend_drivebay () { # Save power state of drive bay before suspend
                       # $1: PP_PRF, PP_BAL, PP_SAV
 
-    if { [ "$1" = "$PP_BAL" ] || [ "$1" = "$PP_SAV" ]; } && [ "$BAY_POWEROFF_ON_BAT" = "1" ] || \
-       [ "$1" = "$PP_PRF" ] && [ "$BAY_POWEROFF_ON_AC"  = "1" ]; then
+    if { [ "$1" = "$PP_BAL" ] || [ "$1" = "$PP_SAV" ]; } && [ "$BAY_POWEROFF_ON_BAL" = "1" ] || \
+       [ "$1" = "$PP_PRF" ] && [ "$BAY_POWEROFF_ON_PRF"  = "1" ]; then
         # setting corresponding to mode is active -> save state
         get_drivebay_device
 

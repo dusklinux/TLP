@@ -308,10 +308,10 @@ get_disk_trim_capability () {
 
 check_ata_errors () {
     # check kernel log for ata errors
-    # (possibly) caused by SATA_LINKPWR_ON_AC/BAT != max_performance
+    # (possibly) caused by SATA_LINKPWR_ON_PRF/BAL != max_performance
     # stdout: error count
 
-    for lpw in $SATA_LINKPWR_ON_BAT $SATA_LINKPWR_ON_AC; do
+    for lpw in $SATA_LINKPWR_ON_BAL $SATA_LINKPWR_ON_PRF; do
         if wordinlist "$lpw" "min_power med_power_with_dipm medium_power"; then
             # config values != max_performance exist --> check kernel log
 

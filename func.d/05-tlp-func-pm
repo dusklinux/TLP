@@ -29,8 +29,8 @@ set_runtime_pm () { # set runtime power management
     local pci_enable_adr pci_disable_adr
 
     case "$1" in
-        "$PP_PRF")           control="${RUNTIME_PM_ON_AC:-}" ;;
-        "$PP_BAL"|"$PP_SAV") control="${RUNTIME_PM_ON_BAT:-}" ;;
+        "$PP_PRF")           control="${RUNTIME_PM_ON_PRF:-}" ;;
+        "$PP_BAL"|"$PP_SAV") control="${RUNTIME_PM_ON_BAL:-}" ;;
     esac
 
     # permanent addresses
@@ -54,7 +54,7 @@ set_runtime_pm () { # set runtime power management
     esac
 
     if [ -n "$control" ]; then
-        # RUNTIME_PM_ON_AC/BAT is configured --> prepare denylists
+        # RUNTIME_PM_ON_PRF/BAT is configured --> prepare denylists
         # driver specific denylist:
         # - undefined = use intrinsic default from /usr/share/tlp/defaults.conf
         # - empty     = disable feature
@@ -130,12 +130,12 @@ set_pcie_aspm () { # set pcie active state power management
     local pwr=""
 
     case "$1" in
-        "$PP_PRF")           pwr="${PCIE_ASPM_ON_AC:-}" ;;
-        "$PP_BAL")           pwr="${PCIE_ASPM_ON_BAT:-}" ;;
-        "$PP_SAV")           pwr="${PCIE_ASPM_ON_SAV:-${PCIE_ASPM_ON_BAT:-}}" ;;
+        "$PP_PRF")           pwr="${PCIE_ASPM_ON_PRF:-}" ;;
+        "$PP_BAL")           pwr="${PCIE_ASPM_ON_BAL:-}" ;;
+        "$PP_SAV")           pwr="${PCIE_ASPM_ON_SAV:-${PCIE_ASPM_ON_BAL:-}}" ;;
 
         "$PP_SUS") # reset on suspend only when configured
-            if [ -n "${PCIE_ASPM_ON_AC:-}${PCIE_ASPM_ON_BAT:-}${PCIE_ASPM_ON_SAV:-}" ]; then
+            if [ -n "${PCIE_ASPM_ON_PRF:-}${PCIE_ASPM_ON_BAL:-}${PCIE_ASPM_ON_SAV:-}" ]; then
                 pwr="default"
             fi
             ;;
@@ -168,8 +168,8 @@ set_sound_power_mode () { # set sound chip power modes
     local pwr cpwr rc
 
     case "$1" in
-        "$PP_PRF")           pwr="${SOUND_POWER_SAVE_ON_AC:-}" ;;
-        "$PP_BAL"|"$PP_SAV") pwr="${SOUND_POWER_SAVE_ON_BAT:-}" ;;
+        "$PP_PRF")           pwr="${SOUND_POWER_SAVE_ON_PRF:-}" ;;
+        "$PP_BAL"|"$PP_SAV") pwr="${SOUND_POWER_SAVE_ON_BAL:-}" ;;
     esac
 
     # when unconfigured consider legacy config param
@@ -250,8 +250,8 @@ set_mem_sleep () {
     local susp
 
     case "$1" in
-        "$PP_PRF")           susp="${MEM_SLEEP_ON_AC:-}" ;;
-        "$PP_BAL"|"$PP_SAV") susp="${MEM_SLEEP_ON_BAT:-}" ;;
+        "$PP_PRF")           susp="${MEM_SLEEP_ON_PRF:-}" ;;
+        "$PP_BAL"|"$PP_SAV") susp="${MEM_SLEEP_ON_BAL:-}" ;;
     esac
 
     if [ -z "$susp" ]; then

@@ -919,7 +919,7 @@ if [ "$show_pcie" = "1" ] || [ "$show_all" = "1" ]; then
 
     # --- runtime pm
     echo "+++ PCIe Runtime Power Management"
-    if [ -z "$RUNTIME_PM_ON_AC" ] && [ -z "$RUNTIME_PM_ON_BAT" ]; then
+    if [ -z "$RUNTIME_PM_ON_PRF" ] && [ -z "$RUNTIME_PM_ON_BAL" ]; then
         echo "Autosuspend       = disabled"
     else
         echo "Autosuspend       = enabled"
@@ -1007,12 +1007,12 @@ fi # show_bat
 
 # --- show warnings
 if [ "$show_warn" = "1" ] || [ "$show_disk" = "1" ] || [ "$show_all" = "1" ]; then
-    # ata errors (possibly) caused by SATA_LINKPWR_ON_AC/BAT != max_performance
+    # ata errors (possibly) caused by SATA_LINKPWR_ON_PRF/BAL != max_performance
     ecnt=$(check_ata_errors)
     if [ "$ecnt" -ne 0 ]; then
         echo "+++ Warnings"
         printf "* Kernel log shows ata errors (%d) possibly caused by the configuration\n" "$ecnt"
-        printf "  SATA_LINKPWR_ON_AC/BAT=min_power or medium_power.\n"
+        printf "  SATA_LINKPWR_ON_PRF/BAL=min_power or medium_power.\n"
         printf "  Consider using medium_power or max_performance instead.\n"
         printf "  See the FAQ: https://linrunner.de/en/tlp/docs/tlp-faq.html#warnings\n"
         printf "  Details:\n"
