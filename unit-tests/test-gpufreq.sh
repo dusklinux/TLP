@@ -2,11 +2,12 @@
 # Test GPU related features
 #
 # Tested parameters:
-# * INTEL_GPU_MIN_FREQ_ON_AC/BAT
-# * INTEL_GPU_MAX_FREQ_ON_AC/BAT
-# * INTEL_GPU_BOOST_FREQ_ON_AC/BAT
-# * RADEON_DPM_PERF_LEVEL_ON_AC/BAT
-# * AMDGPU_ABM_LEVEL_ON_AC/BAT
+# * INTEL_GPU_POWER_PROFILE_ON_PRF/BAL/SAV
+# * INTEL_GPU_MIN_FREQ_ON_PRF/BAL/SAV
+# * INTEL_GPU_MAX_FREQ_ON_PRF/BAL/SAV
+# * INTEL_GPU_BOOST_FREQ_ON_PRF/BAL/SAV
+# * RADEON_DPM_PERF_LEVEL_ON_PRF/BAL/SAV
+# * AMDGPU_ABM_LEVEL_ON_PRF/BAL/SAV
 #
 # Supported GPU drivers:
 # * i915
@@ -63,22 +64,22 @@ check_intel_gpu_power_profile () {
             for pp in $pp_seq; do
                 case "$prof" in
                     performance)  sudo tlp "$prof" -- TLP_AUTO_SWITCH=2 TLP_PROFILE_DEFAULT="" \
-                        INTEL_GPU_POWER_PROFILE_ON_AC="$pp" INTEL_GPU_POWER_PROFILE_ON_BAT="$pp_save" INTEL_GPU_POWER_PROFILE_ON_SAV="$pp_save"  \
-                        INTEL_GPU_MIN_FREQ_ON_AC=""         INTEL_GPU_MIN_FREQ_ON_BAT=""              INTEL_GPU_MIN_FREQ_ON_SAV="" \
-                        INTEL_GPU_MAX_FREQ_ON_AC=""         INTEL_GPU_MAX_FREQ_ON_BAT=""              INTEL_GPU_MAX_FREQ_ON_SAV="" \
-                        INTEL_GPU_BOOST_FREQ_ON_AC="$boost" INTEL_GPU_BOOST_FREQ_ON_BAT="$boost_save" INTEL_GPU_MIN_FREQ_ON_SAV="" \
+                        INTEL_GPU_POWER_PROFILE_ON_PRF="$pp" INTEL_GPU_POWER_PROFILE_ON_BAL="$pp_save" INTEL_GPU_POWER_PROFILE_ON_SAV="$pp_save"  \
+                        INTEL_GPU_MIN_FREQ_ON_PRF=""         INTEL_GPU_MIN_FREQ_ON_BAL=""              INTEL_GPU_MIN_FREQ_ON_SAV="" \
+                        INTEL_GPU_MAX_FREQ_ON_PRF=""         INTEL_GPU_MAX_FREQ_ON_BAL=""              INTEL_GPU_MAX_FREQ_ON_SAV="" \
+                        INTEL_GPU_BOOST_FREQ_ON_PRF=""       INTEL_GPU_BOOST_FREQ_ON_BAL=""            INTEL_GPU_MIN_FREQ_ON_SAV="" \
                         > /dev/null 2>&1 ;;
                     balanced) sudo tlp "$prof" -- TLP_AUTO_SWITCH=2 TLP_PROFILE_DEFAULT="" \
-                        INTEL_GPU_POWER_PROFILE_ON_AC="$pp_save" INTEL_GPU_POWER_PROFILE_ON_BAT="$pp" INTEL_GPU_POWER_PROFILE_ON_SAV="$pp_save"  \
-                        INTEL_GPU_MIN_FREQ_ON_AC=""         INTEL_GPU_MIN_FREQ_ON_BAT=""              INTEL_GPU_MIN_FREQ_ON_SAV="" \
-                        INTEL_GPU_MAX_FREQ_ON_AC=""         INTEL_GPU_MAX_FREQ_ON_BAT=""              INTEL_GPU_MAX_FREQ_ON_SAV="" \
-                        INTEL_GPU_BOOST_FREQ_ON_AC="$boost" INTEL_GPU_BOOST_FREQ_ON_BAT="$boost_save" INTEL_GPU_MIN_FREQ_ON_SAV="" \
+                        INTEL_GPU_POWER_PROFILE_ON_PRF="$pp_save" INTEL_GPU_POWER_PROFILE_ON_BAL="$pp" INTEL_GPU_POWER_PROFILE_ON_SAV="$pp_save"  \
+                        INTEL_GPU_MIN_FREQ_ON_PRF=""         INTEL_GPU_MIN_FREQ_ON_BAL=""              INTEL_GPU_MIN_FREQ_ON_SAV="" \
+                        INTEL_GPU_MAX_FREQ_ON_PRF=""         INTEL_GPU_MAX_FREQ_ON_BAL=""              INTEL_GPU_MAX_FREQ_ON_SAV="" \
+                        INTEL_GPU_BOOST_FREQ_ON_PRF=""       INTEL_GPU_BOOST_FREQ_ON_BAL=""            INTEL_GPU_MIN_FREQ_ON_SAV="" \
                         > /dev/null 2>&1 ;;
                     power-saver) sudo tlp "$prof" -- TLP_AUTO_SWITCH=2 TLP_PROFILE_DEFAULT="" \
-                        INTEL_GPU_POWER_PROFILE_ON_AC="$pp_save" INTEL_GPU_POWER_PROFILE_ON_BAT="$pp_save" INTEL_GPU_POWER_PROFILE_ON_SAV="$pp"  \
-                        INTEL_GPU_MIN_FREQ_ON_AC=""         INTEL_GPU_MIN_FREQ_ON_BAT=""              INTEL_GPU_MIN_FREQ_ON_SAV="" \
-                        INTEL_GPU_MAX_FREQ_ON_AC=""         INTEL_GPU_MAX_FREQ_ON_BAT=""              INTEL_GPU_MAX_FREQ_ON_SAV="" \
-                        INTEL_GPU_BOOST_FREQ_ON_AC="$boost" INTEL_GPU_BOOST_FREQ_ON_BAT="$boost_save" INTEL_GPU_MIN_FREQ_ON_SAV="" \
+                        INTEL_GPU_POWER_PROFILE_ON_PRF="$pp_save" INTEL_GPU_POWER_PROFILE_ON_BAL="$pp_save" INTEL_GPU_POWER_PROFILE_ON_SAV="$pp"  \
+                        INTEL_GPU_MIN_FREQ_ON_PRF=""         INTEL_GPU_MIN_FREQ_ON_BAL=""              INTEL_GPU_MIN_FREQ_ON_SAV="" \
+                        INTEL_GPU_MAX_FREQ_ON_PRF=""         INTEL_GPU_MAX_FREQ_ON_BAL=""              INTEL_GPU_MAX_FREQ_ON_SAV="" \
+                        INTEL_GPU_BOOST_FREQ_ON_PRF=""       INTEL_GPU_BOOST_FREQ_ON_BAL=""            INTEL_GPU_MIN_FREQ_ON_SAV="" \
                         > /dev/null 2>&1 ;;
                 esac
 
@@ -171,24 +172,24 @@ check_intel_gpu_freq () {
             # apply target frequencies
             case "$prof" in
                 performance)  sudo tlp "$prof" -- TLP_AUTO_SWITCH=2 TLP_PROFILE_DEFAULT="" \
-                    INTEL_GPU_MIN_FREQ_ON_AC="$min"     INTEL_GPU_MIN_FREQ_ON_BAT="$min_save"     INTEL_GPU_MIN_FREQ_ON_SAV="$min_save" \
-                    INTEL_GPU_MAX_FREQ_ON_AC="$max"     INTEL_GPU_MAX_FREQ_ON_BAT="$max_save"     INTEL_GPU_MAX_FREQ_ON_SAV="$max_save" \
-                    INTEL_GPU_BOOST_FREQ_ON_AC="$boost" INTEL_GPU_BOOST_FREQ_ON_BAT="$boost_save" INTEL_GPU_MIN_FREQ_ON_SAV="$boost_save" \
-                    INTEL_GPU_POWER_PROFILE_ON_AC=""    INTEL_GPU_POWER_PROFILE_ON_BAT=""         INTEL_GPU_POWER_PROFILE_ON_SAV=""  \
+                    INTEL_GPU_MIN_FREQ_ON_PRF="$min"     INTEL_GPU_MIN_FREQ_ON_BAL="$min_save"     INTEL_GPU_MIN_FREQ_ON_SAV="$min_save" \
+                    INTEL_GPU_MAX_FREQ_ON_PRF="$max"     INTEL_GPU_MAX_FREQ_ON_BAL="$max_save"     INTEL_GPU_MAX_FREQ_ON_SAV="$max_save" \
+                    INTEL_GPU_BOOST_FREQ_ON_PRF="$boost" INTEL_GPU_BOOST_FREQ_ON_BAL="$boost_save" INTEL_GPU_MIN_FREQ_ON_SAV="$boost_save" \
+                    INTEL_GPU_POWER_PROFILE_ON_PRF=""    INTEL_GPU_POWER_PROFILE_ON_BAL=""         INTEL_GPU_POWER_PROFILE_ON_SAV=""  \
                     > /dev/null 2>&1 ;;
 
                 balanced) sudo tlp "$prof" -- TLP_AUTO_SWITCH=2 TLP_PROFILE_DEFAULT="" \
-                    INTEL_GPU_MIN_FREQ_ON_BAT="$min"     INTEL_GPU_MIN_FREQ_ON_SAV="$min_save"     INTEL_GPU_MIN_FREQ_ON_AC="$min_save" \
-                    INTEL_GPU_MAX_FREQ_ON_BAT="$max"     INTEL_GPU_MAX_FREQ_ON_SAV="$max_save"     INTEL_GPU_MAX_FREQ_ON_AC="$max_save" \
-                    INTEL_GPU_BOOST_FREQ_ON_BAT="$boost" INTEL_GPU_BOOST_FREQ_ON_SAV="$boost_save" INTEL_GPU_BOOST_FREQ_ON_AC="$boost_save" \
-                    INTEL_GPU_POWER_PROFILE_ON_AC=""    INTEL_GPU_POWER_PROFILE_ON_BAT=""         INTEL_GPU_POWER_PROFILE_ON_SAV=""  \
+                    INTEL_GPU_MIN_FREQ_ON_BAL="$min"     INTEL_GPU_MIN_FREQ_ON_SAV="$min_save"     INTEL_GPU_MIN_FREQ_ON_PRF="$min_save" \
+                    INTEL_GPU_MAX_FREQ_ON_BAL="$max"     INTEL_GPU_MAX_FREQ_ON_SAV="$max_save"     INTEL_GPU_MAX_FREQ_ON_PRF="$max_save" \
+                    INTEL_GPU_BOOST_FREQ_ON_BAL="$boost" INTEL_GPU_BOOST_FREQ_ON_SAV="$boost_save" INTEL_GPU_BOOST_FREQ_ON_PRF="$boost_save" \
+                    INTEL_GPU_POWER_PROFILE_ON_PRF=""    INTEL_GPU_POWER_PROFILE_ON_BAL=""         INTEL_GPU_POWER_PROFILE_ON_SAV=""  \
                     > /dev/null 2>&1 ;;
 
                 power-saver) sudo tlp "$prof" -- TLP_AUTO_SWITCH=2 TLP_PROFILE_DEFAULT="" \
-                    INTEL_GPU_MIN_FREQ_ON_SAV="$min"     INTEL_GPU_MIN_FREQ_ON_AC="$min_save"     INTEL_GPU_MIN_FREQ_ON_AC="$min_save" \
-                    INTEL_GPU_MAX_FREQ_ON_SAV="$max"     INTEL_GPU_MAX_FREQ_ON_AC="$max_save"     INTEL_GPU_MAX_FREQ_ON_AC="$max_save" \
-                    INTEL_GPU_BOOST_FREQ_ON_SAV="$boost" INTEL_GPU_BOOST_FREQ_ON_AC="$boost_save" INTEL_GPU_BOOST_FREQ_ON_AC="$boost_save" \
-                    INTEL_GPU_POWER_PROFILE_ON_AC=""    INTEL_GPU_POWER_PROFILE_ON_BAT=""         INTEL_GPU_POWER_PROFILE_ON_SAV=""  \
+                    INTEL_GPU_MIN_FREQ_ON_SAV="$min"     INTEL_GPU_MIN_FREQ_ON_PRF="$min_save"     INTEL_GPU_MIN_FREQ_ON_BAL="$min_save" \
+                    INTEL_GPU_MAX_FREQ_ON_SAV="$max"     INTEL_GPU_MAX_FREQ_ON_PRF="$max_save"     INTEL_GPU_MAX_FREQ_ON_BAL="$max_save" \
+                    INTEL_GPU_BOOST_FREQ_ON_SAV="$boost" INTEL_GPU_BOOST_FREQ_ON_PRF="$boost_save" INTEL_GPU_BOOST_FREQ_ON_BAL="$boost_save" \
+                    INTEL_GPU_POWER_PROFILE_ON_PRF=""    INTEL_GPU_POWER_PROFILE_ON_BAL=""         INTEL_GPU_POWER_PROFILE_ON_SAV=""  \
                     > /dev/null 2>&1 ;;
             esac
 
@@ -224,21 +225,21 @@ check_intel_gpu_freq () {
             # revert to initial frequencies
             case "$prof" in
                 performance) sudo tlp "$prof" -- TLP_AUTO_SWITCH=2 TLP_PROFILE_DEFAULT="" \
-                    INTEL_GPU_MIN_FREQ_ON_AC="$min_save"     INTEL_GPU_MIN_FREQ_ON_BAT="$min"     INTEL_GPU_MIN_FREQ_ON_SAV="$min" \
-                    INTEL_GPU_MAX_FREQ_ON_AC="$max_save"     INTEL_GPU_MAX_FREQ_ON_BAT="$max"     INTEL_GPU_MAX_FREQ_ON_SAV="$max" \
-                    INTEL_GPU_BOOST_FREQ_ON_AC="$boost_save" INTEL_GPU_BOOST_FREQ_ON_BAT="$boost" INTEL_GPU_MIN_FREQ_ON_SAV="$boost" \
+                    INTEL_GPU_MIN_FREQ_ON_PRF="$min_save"     INTEL_GPU_MIN_FREQ_ON_BAL="$min"     INTEL_GPU_MIN_FREQ_ON_SAV="$min" \
+                    INTEL_GPU_MAX_FREQ_ON_PRF="$max_save"     INTEL_GPU_MAX_FREQ_ON_BAL="$max"     INTEL_GPU_MAX_FREQ_ON_SAV="$max" \
+                    INTEL_GPU_BOOST_FREQ_ON_PRF="$boost_save" INTEL_GPU_BOOST_FREQ_ON_BAL="$boost" INTEL_GPU_MIN_FREQ_ON_SAV="$boost" \
                     > /dev/null 2>&1 ;;
 
                 balanced) sudo tlp "$prof" -- TLP_AUTO_SWITCH=2 TLP_PROFILE_DEFAULT="" \
-                    INTEL_GPU_MIN_FREQ_ON_BAT="$min_save"     INTEL_GPU_MIN_FREQ_ON_SAV="$min"     INTEL_GPU_MIN_FREQ_ON_AC="$min" \
-                    INTEL_GPU_MAX_FREQ_ON_BAT="$max_save"     INTEL_GPU_MAX_FREQ_ON_SAV="$max"     INTEL_GPU_MAX_FREQ_ON_AC="$max" \
-                    INTEL_GPU_BOOST_FREQ_ON_BAT="$boost_save" INTEL_GPU_BOOST_FREQ_ON_SAV="$boost" INTEL_GPU_BOOST_FREQ_ON_AC="$boost" \
+                    INTEL_GPU_MIN_FREQ_ON_BAL="$min_save"     INTEL_GPU_MIN_FREQ_ON_SAV="$min"     INTEL_GPU_MIN_FREQ_ON_PRF="$min" \
+                    INTEL_GPU_MAX_FREQ_ON_BAL="$max_save"     INTEL_GPU_MAX_FREQ_ON_SAV="$max"     INTEL_GPU_MAX_FREQ_ON_PRF="$max" \
+                    INTEL_GPU_BOOST_FREQ_ON_BAL="$boost_save" INTEL_GPU_BOOST_FREQ_ON_SAV="$boost" INTEL_GPU_BOOST_FREQ_ON_PRF="$boost" \
                     > /dev/null 2>&1 ;;
 
                 power-saver) sudo tlp "$prof" -- TLP_AUTO_SWITCH=2 TLP_PROFILE_DEFAULT="" \
-                    INTEL_GPU_MIN_FREQ_ON_SAV="$min_save"     INTEL_GPU_MIN_FREQ_ON_AC="$min"     INTEL_GPU_MIN_FREQ_ON_AC="$min" \
-                    INTEL_GPU_MAX_FREQ_ON_SAV="$max_save"     INTEL_GPU_MAX_FREQ_ON_AC="$max"     INTEL_GPU_MAX_FREQ_ON_AC="$max" \
-                    INTEL_GPU_BOOST_FREQ_ON_SAV="$boost_save" INTEL_GPU_BOOST_FREQ_ON_AC="$boost" INTEL_GPU_BOOST_FREQ_ON_AC="$boost" \
+                    INTEL_GPU_MIN_FREQ_ON_SAV="$min_save"     INTEL_GPU_MIN_FREQ_ON_PRF="$min"     INTEL_GPU_MIN_FREQ_ON_BAL="$min" \
+                    INTEL_GPU_MAX_FREQ_ON_SAV="$max_save"     INTEL_GPU_MAX_FREQ_ON_PRF="$max"     INTEL_GPU_MAX_FREQ_ON_BAL="$max" \
+                    INTEL_GPU_BOOST_FREQ_ON_SAV="$boost_save" INTEL_GPU_BOOST_FREQ_ON_PRF="$boost" INTEL_GPU_BOOST_FREQ_ON_BAL="$boost" \
                     > /dev/null 2>&1 ;;
             esac
 
@@ -322,13 +323,13 @@ check_amd_gpu_dpm_level () {
             # apply dpm level
             case "$prof" in
                 performance) sudo tlp "$prof" -- TLP_AUTO_SWITCH=2 TLP_PROFILE_DEFAULT="" \
-                    RADEON_DPM_PERF_LEVEL_ON_AC="$dpm" RADEON_DPM_PERF_LEVEL_ON_BAT="$dpm_save" RADEON_DPM_PERF_LEVEL_ON_SAV="$dpm_save" \
+                    RADEON_DPM_PERF_LEVEL_ON_PRF="$dpm" RADEON_DPM_PERF_LEVEL_ON_BAL="$dpm_save" RADEON_DPM_PERF_LEVEL_ON_SAV="$dpm_save" \
                     > /dev/null 2>&1 ;;
                 balanced) sudo tlp "$prof" -- TLP_AUTO_SWITCH=2 TLP_PROFILE_DEFAULT="" \
-                    RADEON_DPM_PERF_LEVEL_ON_BAT="$dpm" RADEON_DPM_PERF_LEVEL_ON_SAV="$dpm_save" RADEON_DPM_PERF_LEVEL_ON_AC="$dpm_save" \
+                    RADEON_DPM_PERF_LEVEL_ON_BAL="$dpm" RADEON_DPM_PERF_LEVEL_ON_SAV="$dpm_save" RADEON_DPM_PERF_LEVEL_ON_PRF="$dpm_save" \
                     > /dev/null 2>&1 ;;
                 power-saver) sudo tlp "$prof" -- TLP_AUTO_SWITCH=2 TLP_PROFILE_DEFAULT="" \
-                    RADEON_DPM_PERF_LEVEL_ON_SAV="$dpm" RADEON_DPM_PERF_LEVEL_ON_AC="$dpm_save" RADEON_DPM_PERF_LEVEL_ON_BAT="$dpm_save" \
+                    RADEON_DPM_PERF_LEVEL_ON_SAV="$dpm" RADEON_DPM_PERF_LEVEL_ON_PRF="$dpm_save" RADEON_DPM_PERF_LEVEL_ON_BAL="$dpm_save" \
                     > /dev/null 2>&1 ;;
             esac
 
@@ -397,13 +398,13 @@ check_amd_gpu_abm_level () {
         for abm in $abm_seq; do
             case "$prof" in
                 performance)  sudo tlp "$prof" -- TLP_AUTO_SWITCH=2 TLP_PROFILE_DEFAULT="" \
-                    AMDGPU_ABM_LEVEL_ON_AC="$abm" AMDGPU_ABM_LEVEL_ON_BAT="$abm_save" AMDGPU_ABM_LEVEL_ON_SAV="$abm_save" \
+                    AMDGPU_ABM_LEVEL_ON_PRF="$abm" AMDGPU_ABM_LEVEL_ON_BAL="$abm_save" AMDGPU_ABM_LEVEL_ON_SAV="$abm_save" \
                     > /dev/null 2>&1 ;;
                 balanced) sudo tlp "$prof" -- TLP_AUTO_SWITCH=2 TLP_PROFILE_DEFAULT="" \
-                    AMDGPU_ABM_LEVEL_ON_BAT="$abm" AMDGPU_ABM_LEVEL_ON_SAV="$abm_save" AMDGPU_ABM_LEVEL_ON_AC="$abm_save" \
+                    AMDGPU_ABM_LEVEL_ON_BAL="$abm" AMDGPU_ABM_LEVEL_ON_SAV="$abm_save" AMDGPU_ABM_LEVEL_ON_PRF="$abm_save" \
                     > /dev/null 2>&1 ;;
                 power-saver) sudo tlp "$prof" -- TLP_AUTO_SWITCH=2 TLP_PROFILE_DEFAULT="" \
-                    AMDGPU_ABM_LEVEL_ON_SAV="$abm" AMDGPU_ABM_LEVEL_ON_AC="$abm_save" AMDGPU_ABM_LEVEL_ON_BAT="$abm_save" \
+                    AMDGPU_ABM_LEVEL_ON_SAV="$abm" AMDGPU_ABM_LEVEL_ON_PRF="$abm_save" AMDGPU_ABM_LEVEL_ON_BAL="$abm_save" \
                     > /dev/null 2>&1 ;;
             esac
 

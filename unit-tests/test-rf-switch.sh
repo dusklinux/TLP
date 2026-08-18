@@ -6,10 +6,10 @@
 # - wwan [on|off]
 #
 # Test automated switching when changing profiles with parameters:
-# - DEVICES_TO_ENABLE_ON_AC
-# - DEVICES_TO_DISABLE_ON_AC
-# - DEVICES_TO_ENABLE_ON_BAT
-# - DEVICES_TO_DISABLE_ON_BAT
+# - DEVICES_TO_ENABLE_ON_PRF
+# - DEVICES_TO_DISABLE_ON_PRF
+# - DEVICES_TO_ENABLE_ON_BAL
+# - DEVICES_TO_DISABLE_ON_BAL
 # - DEVICES_TO_ENABLE_ON_SAV
 # - DEVICES_TO_DISABLE_ON_SAV
 #
@@ -111,9 +111,9 @@ run_rf_profile () {
 
     printf_msg " %-11s: enable=%-32s disable=%-18s expect=%-14s" "$prof" "[$rf_on]" "[$rf_off]" "[$rf_xpect]"
     case "$prof" in
-        performance) sudo tlp "$prof" -- DEVICES_TO_ENABLE_ON_AC="$rf_on" DEVICES_TO_DISABLE_ON_AC="$rf_off" \
+        performance) sudo tlp "$prof" -- DEVICES_TO_ENABLE_ON_PRF="$rf_on" DEVICES_TO_DISABLE_ON_PRF="$rf_off" \
             DEVICES_TO_ENABLE_ON_STARTUP="$rf_on_st" DEVICES_TO_DISABLE_ON_STARTUP="$rf_off_st" > /dev/null 2>&1 ;;
-        balanced)    sudo tlp "$prof" -- DEVICES_TO_ENABLE_ON_BAT="$rf_on" DEVICES_TO_DISABLE_ON_BAT="$rf_off" \
+        balanced)    sudo tlp "$prof" -- DEVICES_TO_ENABLE_ON_BAL="$rf_on" DEVICES_TO_DISABLE_ON_BAL="$rf_off" \
             DEVICES_TO_ENABLE_ON_STARTUP="$rf_on_st" DEVICES_TO_DISABLE_ON_STARTUP="$rf_off_st" > /dev/null 2>&1 ;;
         power-saver) sudo tlp "$prof" -- DEVICES_TO_ENABLE_ON_SAV="$rf_on" DEVICES_TO_DISABLE_ON_SAV="$rf_off" \
             DEVICES_TO_ENABLE_ON_STARTUP="$rf_on_st" DEVICES_TO_DISABLE_ON_STARTUP="$rf_off_st" > /dev/null 2>&1 ;;

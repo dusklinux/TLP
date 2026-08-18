@@ -30,7 +30,7 @@ check_disabled_defaults () {
     printf_msg "check_disabled_defaults {{{\n"
 
     if $READCONFS | grep -v '^defaults.conf' | grep -E -q 'CPU_ENERGY_PERF_POLICY'; then
-        printf_msg "*** Error: For the test to succeed, your configuration must not include CPU_ENERGY_PERF_POLICY_ON_AC/BAT/SAV.\n"
+        printf_msg "*** Error: For the test to succeed, your configuration must not include CPU_ENERGY_PERF_POLICY_ON_PRF/BAL/SAV.\n"
         errcnt=1
 
     elif [ -f "${CPU0}/cpufreq/energy_performance_preference" ]; then
@@ -43,8 +43,8 @@ check_disabled_defaults () {
             printf_msg " %s:\n" "$prof"
             pol_save="$(read_sysf "${CPU0}/cpufreq/energy_performance_preference")"
             case "$prof" in
-                performance) pol="$(sed -rn 's/CPU_ENERGY_PERF_POLICY_ON_AC=(.+)/\1/p' "$DEFAULTS")" ;;
-                balanced)    pol="$(sed -rn 's/CPU_ENERGY_PERF_POLICY_ON_BAT=(.+)/\1/p' "$DEFAULTS")" ;;
+                performance) pol="$(sed -rn 's/CPU_ENERGY_PERF_POLICY_ON_PRF=(.+)/\1/p' "$DEFAULTS")" ;;
+                balanced)    pol="$(sed -rn 's/CPU_ENERGY_PERF_POLICY_ON_BAL=(.+)/\1/p' "$DEFAULTS")" ;;
                 power-saver) pol="$(sed -rn 's/CPU_ENERGY_PERF_POLICY_ON_SAV=(.+)/\1/p' "$DEFAULTS")" ;;
             esac
 
