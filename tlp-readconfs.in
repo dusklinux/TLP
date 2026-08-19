@@ -25,6 +25,7 @@ use Getopt::Long;
 
 # --- Definitions
 # Path substitutions
+## no critic (ValuesAndExpressions::ProhibitConstantPragma)
 use constant CONF_USR => '@TLP_CONFUSR@';
 use constant CONF_DIR => '@TLP_CONFDIR@';
 use constant CONF_DEF => '@TLP_CONFDEF@';
@@ -63,12 +64,13 @@ my $defsrc = basename(CONF_DEF);
 
 # Format and write debug message
 # @_: printf arguments including format string
-sub printf_debug {
+sub printf_debug { ## no critic (Subroutines::RequireArgUnpacking)
+    my @args = @_;
     if ( $trace2stderr) {
         printf STDERR @_;
     } elsif ( ! $notrace && $debug ) {
         open (my $logpipe, "|-", "logger -p daemon.debug -t \"tlp\" --id=\$\$ --") || return 1;
-        printf {$logpipe} @_;
+        printf {$logpipe} @args;
         close ($logpipe);
     }
 
@@ -83,12 +85,7 @@ sub printf_debug {
 # $_[4]: 0=user config/1=default
 # return: 0=new name/1=known name
 sub store_name_value_source {
-    my $name   = $_[0];
-    my $value  = $_[1];
-    my $append = $_[2];
-    my $source = $_[3];
-    my $is_def = $_[4];
-    my $is_ren = $_[5];
+    my ( $name, $value, $append, $source, $is_def, $is_ren ) = @_;
 
     $debug = 1 if ( $name eq "TLP_DEBUG" && $value =~ /\bcfg\b/ );
 
@@ -154,8 +151,7 @@ sub store_name_value_source {
 # $_[1]: 0=no change/1=rename parameters
 # return: 0=ok/1=file non-existent
 sub parse_configfile {
-    my $fname  = $_[0];
-    my $do_ren = $_[1];
+    my ( $fname, $do_ren ) = @_;
     my $source;
     my $is_def;
     if ( $fname eq CONF_DEF ) {
@@ -166,7 +162,7 @@ sub parse_configfile {
         $is_def = 0;
     }
 
-    open (my $cf, "<", $fname) || return 1;
+    open (my $cf, "<", $fname) || return 1; ## no critic (InputOutput::RequireBriefOpen)
 
     my $ln = 0;
     while ( my $line = <$cf> ) {
@@ -204,13 +200,13 @@ sub parse_configfile {
 # $_[0]: filepath (without argument the output will be written to stdout)
 # return: 0=ok/1=file open error
 sub write_runconf {
-    my $fname = $_[0];
+    my ( $fname ) = @_;
 
     my $runconf;
     if ( ! $fname ) {
         $runconf = *STDOUT;
     } else {
-        open ($runconf, ">", $fname) || return 1;
+        open ($runconf, ">", $fname) || return 1; ## no critic (InputOutput::RequireBriefOpen)
     }
 
     foreach ( @config_val ) {
@@ -249,9 +245,9 @@ sub write_runconf {
 # $_[0]: rules file
 # return: 0=ok/1=file non-existent
 sub parse_renfile {
-    my $fname = $_[0];
+    my ( $fname ) = @_;
 
-    open (my $rf, "<", $fname) || return 1;
+    open (my $rf, "<", $fname) || return 1; ## no critic (InputOutput::RequireBriefOpen)
 
     # accumulate renaming
     while ( my $line = <$rf> ) {
@@ -286,9 +282,9 @@ sub parse_renfile {
 # $_[0]: parameters file
 # return: 0=ok/1=file non-existent
 sub parse_dprfile {
-    my $fname = $_[0];
+    my ( $fname ) = @_;
 
-    open (my $df, "<", $fname) || return 1;
+    open (my $df, "<", $fname) || return 1; ## no critic (InputOutput::RequireBriefOpen)
 
     # accumulate deprecated params and mesgs
     while ( my $line = <$df> ) {
