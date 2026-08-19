@@ -72,8 +72,9 @@ set_wifi_power_mode () { # set wifi power save mode -- $1: PP_PRF, PP_BAL, PP_SA
     local pwr iface rc
 
     case "$1" in
-        "$PP_PRF")           pwr="${WIFI_PWR_ON_PRF:-}" ;;
-        "$PP_BAL"|"$PP_SAV") pwr="${WIFI_PWR_ON_BAL:-}" ;;
+        "$PP_PRF") pwr="${WIFI_PWR_ON_PRF:-}" ;;
+        "$PP_BAL") pwr="${WIFI_PWR_ON_BAL:-}" ;;
+        "$PP_SAV") pwr="${WIFI_PWR_ON_SAV:-${WIFI_PWR_ON_BAL:-}}" ;;
     esac
 
     # check values, translate obsolete syntax

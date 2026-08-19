@@ -131,10 +131,11 @@
 #DISK_IDLE_SECS_ON_BAL=2
 
 # Dirty page values (timeouts in secs).
-# Default: 15 (PRF), 60 (BAL)
+# Default: 15
 
 #MAX_LOST_WORK_SECS_ON_PRF=15
-#MAX_LOST_WORK_SECS_ON_BAL=60
+#MAX_LOST_WORK_SECS_ON_BAL=15
+#MAX_LOST_WORK_SECS_ON_SAV=15
 
 # Select a CPU scaling driver operation mode.
 # Intel CPU with intel_pstate driver:
@@ -272,6 +273,7 @@
 
 #MEM_SLEEP_ON_PRF=s2idle
 #MEM_SLEEP_ON_BAL=deep
+#MEM_SLEEP_ON_SAV=deep
 
 # Define disk devices on which the following DISK/AHCI_RUNTIME parameters act.
 # Separate multiple devices with spaces.
@@ -284,10 +286,11 @@
 # Levels 1..127 may spin down the disk; 255 allowable on most drives.
 # Separate values for multiple disks with spaces. Use the special value 'keep'
 # to keep the hardware default for the particular disk.
-# Default: 254 (PRF), 128 (BAL)
+# Default: 254 (PRF), 128 (BAL, SAV)
 
 #DISK_APM_LEVEL_ON_PRF="254 254"
 #DISK_APM_LEVEL_ON_BAL="128 128"
+#DISK_APM_LEVEL_ON_SAV="128 128"
 
 # Exclude disk classes from advanced power management (APM):
 #   sata, ata, usb, ieee1394.
@@ -310,6 +313,7 @@
 
 #DISK_SPINDOWN_TIMEOUT_ON_PRF="0 0"
 #DISK_SPINDOWN_TIMEOUT_ON_BAL="0 0"
+#DISK_SPINDOWN_TIMEOUT_ON_SAV="0 0"
 
 # Select I/O scheduler for the disk devices.
 # Multi queue (blk-mq) schedulers:
@@ -332,10 +336,11 @@
 #   min_power, med_power_with_dipm(*), medium_power, max_performance.
 # (*) recommended.
 # Multiple values separated with spaces are tried sequentially until success.
-# Default: med_power_with_dipm (PRF, BAL)
+# Default: med_power_with_dipm
 
 #SATA_LINKPWR_ON_PRF="med_power_with_dipm"
 #SATA_LINKPWR_ON_BAL="med_power_with_dipm"
+#SATA_LINKPWR_ON_SAV="med_power_with_dipm"
 
 # Exclude SATA links from AHCI link power management (ALPM).
 # SATA links are specified by their host. Refer to the output of
@@ -351,10 +356,11 @@
 # Note: SATA controllers are PCIe bus devices and handled by RUNTIME_PM
 # further down.
 
-# Default: on (PRF), auto (BAL)
+# Default: on (PRF), auto (BAL, SAV)
 
 #AHCI_RUNTIME_PM_ON_PRF=on
 #AHCI_RUNTIME_PM_ON_BAL=auto
+#AHCI_RUNTIME_PM_ON_SAV=auto
 
 # Seconds of inactivity before disk is suspended.
 # Note: effective only when AHCI_RUNTIME_PM_ON_PRF/BAL is activated.
@@ -424,10 +430,11 @@
 #AMDGPU_ABM_LEVEL_ON_SAV=3
 
 # Wi-Fi power saving mode: on=enable, off=disable.
-# Default: off (PRF), on (BAL)
+# Default: off (PRF), on (BAL, SAV)
 
 #WIFI_PWR_ON_PRF=off
 #WIFI_PWR_ON_BAL=on
+#WIFI_PWR_ON_SAV=on
 
 # Disable Wake-on-LAN: Y/N.
 # Default: Y
@@ -442,9 +449,10 @@
 
 #SOUND_POWER_SAVE_ON_PRF=1
 #SOUND_POWER_SAVE_ON_BAL=1
+#SOUND_POWER_SAVE_ON_SAV=1
 
 # Disable controller too (HDA only): Y/N.
-# Note: effective only when SOUND_POWER_SAVE_ON_PRF/BAL is activated.
+# Note: effective only when SOUND_POWER_SAVE_ON_PRF/BAL/SAV is activated.
 # Default: Y
 
 #SOUND_POWER_SAVE_CONTROLLER=Y
@@ -460,10 +468,11 @@
 
 # Autosuspend PCIe devices (Runtime Power Management):
 #   on=disable, auto=enable.
-# Default: on (PRF), auto (BAL)
+# Default: on (PRF), auto (BAL, SAV)
 
 #RUNTIME_PM_ON_PRF=on
 #RUNTIME_PM_ON_BAL=auto
+#RUNTIME_PM_ON_SAV=auto
 
 # Exclude listed PCIe device adresses from autosuspend.
 # Note: this preserves the kernel driver default, to force a certain state
