@@ -129,6 +129,11 @@ MANFILESPD8 = \
 	tlp-pd.8 \
 	tlp-pd.service.8
 
+MANFILESALL = \
+	man/* \
+	man-pd/* \
+	man-rdw/*
+
 SHFILES = \
 	tlp.in \
 	tlp-func-base.in \
@@ -156,6 +161,9 @@ PLFILES = \
 PYFILES = \
 	tlpctl.in \
 	tlp-pd.in
+
+UTPYFILES = \
+	unit-tests/*.py
 
 BATDRVFILES = $(foreach drv,$(wildcard bat.d/[0-9][0-9]-[a-z]*),$(drv)~)
 
@@ -405,15 +413,21 @@ checkdupconst:
 
 checkman:
 	@echo "*** checkman ********************************************************************************"
-	@grep '.TH ' man/* man-pd/* man-rdw/*
+	@grep '.TH ' $(MANFILESALL)
 
 checkconf:
 	@echo "*** checkconf *******************************************************************************"
 	@grep -v '^\s*\(#\|$$\)' tlp.conf.in || true
 
+checkoldsfx:
+	@echo "*** checkoldsfx *******************************************************************************"
+	@grep -E -n '_ON_(AC|BAT)' tlp.conf.in $(SHFILES) $(UTSHFILES) $(PLFILES) $(PYFILES) $(UTPYFILES) $(MANFILESALL) \
+		| grep -v 'RESTORE_THRESHOLDS_ON_BAT' || true
+
 checkwip:
 	@echo "*** checkwip ********************************************************************************"
-	@grep -E -n --exclude=$(EXCLUDECHECKWIP) "### (DEBUG|DEVEL|FIXME|TODO|WIP)" $(SHFILES) $(UTSHFILES) $(PLFILES) $(PYFILES) || true
+	@grep -E -n --exclude=$(EXCLUDECHECKWIP) "### (DEBUG|DEVEL|FIXME|TODO|WIP)" $(SHFILES) $(UTSHFILES) $(PLFILES) $(PYFILES) $(UTPYFILES) \
+		|| true
 
 bat.d/TEMPLATE~: bat.d/TEMPLATE
 	@awk '/^batdrv_[a-z_]+ ()/ { print $$1; }' $< | grep -v 'batdrv_is' | sort > $@
