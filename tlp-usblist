@@ -8,12 +8,11 @@ package tlp_usblist;
 use strict;
 use warnings;
 
-# --- Constants
-## no critic (ValuesAndExpressions::ProhibitConstantPragma)
-use constant USBD => "/sys/bus/usb/devices";
-
 # --- Modules
 use Getopt::Long;
+
+# --- Constants
+my $USBD = "/sys/bus/usb/devices";
 
 # --- Global vars
 my %usbdevices;
@@ -82,7 +81,7 @@ sub usbdriverlist {
 GetOptions ('verbose' => \$verbose);
 
 # Read USB device tree attributes as arrays into %usbdevices hash, indexed by Bus_Device
-foreach my $udev (grep { ! /:/ } glob USBD . "/*") {
+foreach my $udev (grep { ! /:/ } glob $USBD . "/*") {
     my $usbv = "(autosuspend not available)";
 
     # get device id

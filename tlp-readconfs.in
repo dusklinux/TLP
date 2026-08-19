@@ -23,21 +23,20 @@ use warnings;
 use File::Basename;
 use Getopt::Long;
 
-# --- Definitions
+# --- Constants
 # Path substitutions
-## no critic (ValuesAndExpressions::ProhibitConstantPragma)
-use constant CONF_USR => '@TLP_CONFUSR@';
-use constant CONF_DIR => '@TLP_CONFDIR@';
-use constant CONF_DEF => '@TLP_CONFDEF@';
-use constant CONF_REN => '@TLP_CONFREN@';
-use constant CONF_DPR => '@TLP_CONFDPR@';
+my $CONF_USR = '@TLP_CONFUSR@';
+my $CONF_DIR = '@TLP_CONFDIR@';
+my $CONF_DEF = '@TLP_CONFDEF@';
+my $CONF_REN = '@TLP_CONFREN@';
+my $CONF_DPR = '@TLP_CONFDPR@';
 
 # Exit codes
-use constant EXIT_TLPCONF => 5;
-use constant EXIT_DEFCONF => 6;
+my $EXIT_TLPCONF = 5;
+my $EXIT_DEFCONF = 6;
 
 # Defaults spared by TLP_DISABLE_DEFAULTS=1
-use constant ESSENTIAL_DEFAULTS => qr/TLP_ENABLE|TLP_WARN_LEVEL|TLP_AUTO_SWITCH|TLP_PROFILE_AC|TLP_PROFILE_BAT/;
+my $ESSENTIAL_DEFAULTS = 'qr/TLP_ENABLE|TLP_WARN_LEVEL|TLP_AUTO_SWITCH|TLP_PROFILE_AC|TLP_PROFILE_BAT/';
 
 # --- Global vars
 my @config_val = ();      # 2-dim array: parameter name, value, source, default-value, renamed-flag
@@ -58,7 +57,7 @@ my $cdiff        = 0;
 
 my $outfile;
 
-my $defsrc = basename(CONF_DEF);
+my $defsrc = basename($CONF_DEF);
 
 # --- Subroutines
 
@@ -154,7 +153,7 @@ sub parse_configfile {
     my ( $fname, $do_ren ) = @_;
     my $source;
     my $is_def;
-    if ( $fname eq CONF_DEF ) {
+    if ( $fname eq $CONF_DEF ) {
         $source = $defsrc;
         $is_def = 1;
     } else {
@@ -215,7 +214,7 @@ sub write_runconf {
         # skip default entries
         next if ( $skip_defaults # if TLP_DISABLE_DEFAULTS=1
             and $source =~ /^$defsrc/ # skip default-only or default-identical
-            and not ( $name =~ ESSENTIAL_DEFAULTS ) # do not skip essentials
+            and not ( $name =~ $ESSENTIAL_DEFAULTS ) # do not skip essentials
         );
 
         if ( $runconf eq *STDOUT ) {
@@ -312,21 +311,21 @@ GetOptions (
 );
 
 # read parameter renaming rules
-parse_renfile (CONF_REN);
+parse_renfile ($CONF_REN);
 
 # read deprecated parameter messages
-parse_dprfile (CONF_DPR);
+parse_dprfile ($CONF_DPR);
 
 # 1. read intrinsic defaults (no renaming)
-parse_configfile (CONF_DEF, 0) == 0 || exit EXIT_DEFCONF;
+parse_configfile ($CONF_DEF, 0) == 0 || exit $EXIT_DEFCONF;
 
 # 2. read customization (with renaming)
-foreach my $conffile ( grep { -f } glob CONF_DIR . "/*.conf" ) {
+foreach my $conffile ( grep { -f } glob $CONF_DIR . "/*.conf" ) {
     parse_configfile ($conffile, $do_rename);
 }
 
 # 3. read user settings (with renaming)
-parse_configfile (CONF_USR, $do_rename) == 0 || exit EXIT_TLPCONF;
+parse_configfile ($CONF_USR, $do_rename) == 0 || exit $EXIT_TLPCONF;
 
 # save result
 write_runconf ($outfile);
