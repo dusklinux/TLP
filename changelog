@@ -6,19 +6,41 @@ please refer to: https://linrunner.de/tlp/developers/packaging.html
   * Development version
 
   * Features
+    Configuration:
+    - Parameter name suffixes have been renamed for clearer profile mapping:
+      _PRF (formerly _AC): applies to the performance profile.
+      _BAL (formerly _BAT): applies to the balanced profile.
+      _SAV (unaltered): applies to the power-saver profile.
+    - Old _AC, _BAT names still work, since they're converted automatically
+      at runtime, but updating your individual configuration is recommended.
+    Audio:
+      - SOUND_POWER_SAVE_ON_SAV added to the power-saver profile
+    Disks:
+      - DISK_APM_LEVEL_ON_SAV,
+      - DISK_SPINDOWN_TIMEOUT_ON_SAV,
+      - SATA_LINKPWR_ON_SAV,
+      - AHCI_RUNTIME_PM_ON_SAV added to the power-saver profile
+    File System:
+    - MAX_LOST_WORK_SECS_ON_SAV added to the power-saver profile;
+      default is set to 15 across all profiles.
+    General:
+    - MEM_SLEEP_ON_SAV added to the power-saver profile
     Graphics:
     - RADEON_DPM_STATE_ON_AC/BAT/SAV removed (deprecated since 1.10)
     Processor:
-    - PLATFORM_PROFILE_ON_AC/BAT/SAV: some vendor firmwares offer different
+    - PLATFORM_PROFILE_ON_PRF/BAL/SAV: some vendor firmwares offer different
       or extra platform profiles, not just the standard ones.
       To enable automatic adaptation, the parameters are transformed into
       space-separated lists of options that are tried sequentially until
       success. The defaults have been improved:
-      - If available, prefer 'balanced-performance' over 'performance'.
-        This will reduce fan speed on AC power for certain gaming laptops
-        (Issue #840).
-      - Add 'cool' and 'quiet' as alternatives to 'low-power'.
+      - If available, prefer 'balanced-performance' over 'performance'
+        in the performance profile. This will reduce fan speed for
+        certain gaming laptops (Issue #840).
+      - Add 'cool' and 'quiet' as alternatives to 'low-power' in the
+        power-saver profile.
     - tlp-stat -p: show platform_profile driver
+    PCIe Devices
+    - RUNTIME_PM_ON_SAV added to the power-saver profile
     Profiles:
     - tlp-pd enhancements:
       - Automatically backgrounds ("daemonizes") itself on startup
@@ -33,15 +55,16 @@ please refer to: https://linrunner.de/tlp/developers/packaging.html
       systemd environments:
       - 'systemctl reload tlp-pd' is now supported
     Radio Devices:
+    - WIFI_PWR_ON_SAV added to the power-saver profile
     - Extend device switching to uniformly cover all profiles (Issue #891):
       - performance
-        - DEVICES_TO_ENABLE_ON_AC
-        - DEVICES_TO_DISABLE_ON_AC (new)
-        - DEVICES_TO_DISABLE_ON_AC_NOT_IN_USE (new)
+        - DEVICES_TO_ENABLE_ON_PRF
+        - DEVICES_TO_DISABLE_ON_PRF (new)
+        - DEVICES_TO_DISABLE_ON_PRF_NOT_IN_USE (new)
       - balanced
-        - DEVICES_TO_ENABLE_ON_BAT (new)
-        - DEVICES_TO_DISABLE_ON_BAT
-        - DEVICES_TO_DISABLE_ON_BAT_NOT_IN_USE
+        - DEVICES_TO_ENABLE_ON_BAL (new)
+        - DEVICES_TO_DISABLE_ON_BAL
+        - DEVICES_TO_DISABLE_ON_BAL_NOT_IN_USE
       - power-saver
         - DEVICES_TO_ENABLE_ON_SAV (new)
         - DEVICES_TO_DISABLE_ON_SAV (new)
