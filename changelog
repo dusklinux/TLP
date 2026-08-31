@@ -54,6 +54,7 @@ please refer to: https://linrunner.de/tlp/developers/packaging.html
       - tlp-stat -T: retrieves tlp-pd trace data from syslog (/var/log/debug)
       systemd environments:
       - 'systemctl reload tlp-pd' is now supported
+    - USB chargers: filter invalid transient states instead of PD/PPS detection
     Radio Devices:
     - WIFI_PWR_ON_SAV added to the power-saver profile
     - Extend device switching to uniformly cover all profiles (Issue #891):
