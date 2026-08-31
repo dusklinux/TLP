@@ -239,6 +239,14 @@ else
 fi
 echo_debug "run" "SHELL=$(print_shell); umask=$(umask)"
 
+if [ "$_cmd" = "auto" ]; then
+    if [ "$2" != "${2#ucsi}" ]; then
+        echo_debug "ps" "ps-udev($2): online=$POWER_SUPPLY_ONLINE; ch_type=$POWER_SUPPLY_CHARGE_TYPE"
+    else
+        echo_debug "ps" "ps-udev($2)"
+    fi
+fi
+
 get_next_power_profile "$_cmd"
 
 # shellcheck disable=SC2154

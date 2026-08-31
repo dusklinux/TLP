@@ -907,7 +907,7 @@ get_sys_power_supply () {
     #   3. Batteries
     # $TLP_PS_IGNORE may be used to ignore one or more power source classes
 
-    local bs ps_ignore psrc psrc_name usb_type
+    local bs ch_type ps_ignore psrc psrc_name usb_type
     local ac0seen=
     local tlp_cmd="$1"
     local wait=
@@ -962,24 +962,22 @@ get_sys_power_supply () {
                     continue
                 fi
 
-                # check USB PS type
-                usb_type="$(get_listitem "$(read_sysf "$psrc/usb_type")")"
-                if ! wordinlist "$usb_type" "PD PD_PPS"; then
-                    echo_debug "ps" "get_sys_power_supply(${psrc_name}).usb_notpd: syspwr=$_syspwr; dev=$_psdev; type=$usb_type"
-                    continue
-                fi
+                # get USB PS type info
+                ch_type="$(read_sysf "$psrc/charge_type")"
+                usb_type="$(get_listitem "$(read_sysf "$psrc/usb_type")")" # for trace only
 
                 # check USB PS status
                 if [ "$(read_sysf "$psrc/online")" = "1" ]; then
                     # USB online --> end iteration
                     _syspwr=$PS_AC
-                    echo_debug "ps" "get_sys_power_supply(${psrc_name}).usb_online: syspwr=$_syspwr; dev=$_psdev; type=$usb_type"
+                    echo_debug "ps" "get_sys_power_supply(${psrc_name}).usb_online: syspwr=$_syspwr; dev=$_psdev; ch_type=$ch_type; usb_type=$usb_type"
                     break
-                else
-                    # USB PS offline could mean battery, but multiple connectors may exist
+                elif [ "$ch_type" != "Unknown" ]; then
+                    # USB PS offline could mean battery power, but multiple connectors may exist
+                    # charge_type "Unknown" is ignored to filter invalid transient states
                     # --> remember and continue looking
                     ac0seen=1
-                    echo_debug "ps" "get_sys_power_supply(${psrc_name}).remember_usb_offline; dev=$_psdev; type=$usb_type"
+                    echo_debug "ps" "get_sys_power_supply(${psrc_name}).remember_usb_offline; dev=$_psdev; ch_type=$ch_type; usb_type=$usb_type"
                 fi
                 ;;
 
@@ -1433,9 +1431,9 @@ get_next_power_profile () {
     fi # still undefined
 
     if [ "$_pp_next" != "$_pp_last" ]; then
-        echo_debug "ps" "get_next_power_profile($tlp_cmd).change: autosw=$TLP_AUTO_SWITCH; def=$def_pp; man=$man_pp; pers=$pers; ps_last=$_ps_last; pp_last=$_pp_last; pp_next=$_pp_next" "$LOG_INFO"
+        echo_debug "ps" "get_next_power_profile($tlp_cmd).change: autosw=$TLP_AUTO_SWITCH; def=$def_pp; man=$man_pp; pers=$pers; ps=$_syspwr; ps_last=$_ps_last; pp_next=$_pp_next; pp_last=$_pp_last" "$LOG_INFO"
     else
-        echo_debug "ps" "get_next_power_profile($tlp_cmd).keep: autosw=$TLP_AUTO_SWITCH; def=$def_pp; man=$man_pp; pers=$pers; ps_last=$_ps_last; pp_last=$_pp_last; pp_next=$_pp_next" "$LOG_INFO"
+        echo_debug "ps" "get_next_power_profile($tlp_cmd).keep: autosw=$TLP_AUTO_SWITCH; def=$def_pp; man=$man_pp; pers=$pers; ps=$_syspwr; ps_last=$_ps_last; pp_next=$_pp_next; pp_last=$_pp_last" "$LOG_INFO"
     fi
 
     return "$_pp_next"

@@ -3,8 +3,13 @@
 # Copyright (c) 2026 Thomas Koch <linrunner at gmx.net> and others.
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-# handle change of power source ac/bat, ignore input device batteries
-ACTION=="change", SUBSYSTEM=="power_supply", KERNEL!="hidpp_battery*", RUN+="@TLP_SBIN@/tlp auto"
+# handle power source events:
+# - AC/Mains charger
+ACTION=="change", SUBSYSTEM=="power_supply", ENV{POWER_SUPPLY_TYPE}=="Mains", RUN+="@TLP_SBIN@/tlp auto %k"
+# - Battery (ignore input device batteries identified by device name "hidpp_battery*")
+ACTION=="change", SUBSYSTEM=="power_supply", ENV{POWER_SUPPLY_TYPE}=="Battery", KERNEL!="hidpp_battery*", RUN+="@TLP_SBIN@/tlp auto %k"
+# - USB-C charger (ignore invalid transient states identified by charge_type "Unknown")
+ACTION=="change", SUBSYSTEM=="power_supply", ENV{POWER_SUPPLY_TYPE}=="USB", ENV{POWER_SUPPLY_CHARGE_TYPE}!="Unknown", RUN+="@TLP_SBIN@/tlp auto %k"
 
 # handle added usb devices (exclude subdevices via DRIVER=="USB")
 ACTION=="add", SUBSYSTEM=="usb", DRIVER=="usb", ENV{DEVTYPE}=="usb_device", RUN+="@TLP_ULIB@/tlp-usb-udev usb %p"
