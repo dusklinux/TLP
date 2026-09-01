@@ -23,7 +23,7 @@ my $verbose = 0;
 # $_[0]: input file
 # return: content / empty string if nonexistent or not readable
 sub catsysf {
-    my ( $fname ) = $_;
+    my ( $fname ) = @_;
     my $sysval = "";
     if (open my $sysf, "<", $fname) {
         chomp ($sysval = <$sysf>);
@@ -36,7 +36,7 @@ sub catsysf {
 # $_[0]: (sub)device base path
 # return: driver / empty string if uevent nonexistent or not readable
 sub getdriver {
-    my ( $dpath ) = $_;
+    my ( $dpath ) = @_;
     my $driver = "";
     if ( open (my $sysf, "<", $dpath . "/uevent") ) {
         # read file line by line
