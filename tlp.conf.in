@@ -437,7 +437,7 @@
 #WIFI_PWR_ON_BAL=on
 #WIFI_PWR_ON_SAV=on
 
-# Disable Wake-on-LAN: Y/N.
+# Disable Wake-on-LAN for PCIe, SoC/platform and USB ethernet interfaces: Y/N.
 # Default: Y
 
 #WOL_DISABLE=Y
